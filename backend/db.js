@@ -3,20 +3,17 @@
 const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
-let db;
+let DB_URI;
 
-if (process.env.NODE_ENV === "production") {
-  db = new Client({
-    connectionString: getDatabaseUri(),
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
+if (process.env.NODE_ENV === "test") {
+  DB_URI = "postgresql:///jobly_test";
 } else {
-  db = new Client({
-    connectionString: getDatabaseUri()
-  });
+  DB_URI = "postgresql:///jobly";
 }
+
+let db = new Client({
+  connectionString: DB_URI
+});
 
 db.connect();
 
