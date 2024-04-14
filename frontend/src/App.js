@@ -1,40 +1,77 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import JoblyApi from './api.js'
 import './App.css';
 import Home from "./Home";
 import Navbar from './Navbar.js'
 import CompanyList from './CompanyList.js'
 import Company from './CompanyDetails.js'
 import JobList from "./JobList.js";
+import JoblyApi from "./api";
+import { jwtDecode } from "jwt-decode";
+import LoginForm from "./Login";
+import SignupForm from "./Signup";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [companies, setCompanies] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
+  const [token, setToken] = useState();
 
   useEffect(() => {
-    async function getInfo() {
-      let companies = await JoblyApi.getCompanies();
-      setCompanies(companies);
-      setIsLoading(false);
-    }
-    getInfo();
-  }, []);
+    const fetchUserInfo = async () => {
+      if (token) {
+        try {
+          let { username } = jwtDecode(token);
+          JoblyApi.token = token;
+          let currentUser = await JoblyApi.getCurrentUser(username);
+          setCurrentUser(currentUser);
+        } catch (error) {
+          console.error("Failed to fetch user information:", error);
+        }
+      }
+    };
 
-  if (isLoading) {
-    return <p>Loading &hellip;</p>;
-  }
+    fetchUserInfo();
+  }, [token]);
+
+  const handleLogin = async (username, password) => {
+    try {
+      let token = await JoblyApi.login(username, password);
+      setToken(token);
+      return { success: true };
+    } catch (errors) {
+      console.error("Login failed:", errors);
+      return { success: false, errors };
+    }
+  };
+
+  const handleSignup = async (userData) => {
+    try {
+      const token = await JoblyApi.signup(userData);
+      setToken(token);
+      return { success: true };
+    } catch (errors) {
+      console.error("Signup failed:", errors);
+      return { success: false, errors };
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setToken(null);
+  };
+
 
   return (
     <div className="App">
       <BrowserRouter>
-        <Navbar />
+        <Navbar currentUser={currentUser} handleLogout={handleLogout} />
         <main>
           <Routes>
-            <Route exact path="/" element={<Home />} />
+            <Route
+              exact path="/"
+              element={<Home />} />
             <Route
               exact path="/companies"
-              element={<CompanyList data={companies} />}
+              element={<CompanyList />}
             />
             <Route
               exact path="/companies/:handle"
@@ -44,6 +81,15 @@ function App() {
               exact path="/jobs"
               element={<JobList />}
             />
+            <Route
+              exact path="/login"
+              element={<LoginForm handleLogin={handleLogin} />} />
+            <Route
+              exact path="/signup"
+              element={<SignupForm handleSignup={handleSignup} />} />
+            {/* <Route
+              exact path="/profile"
+              element={<Profile currentUser={currentUser} />} /> */}
           </Routes>
         </main>
       </BrowserRouter>

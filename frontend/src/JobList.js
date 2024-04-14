@@ -1,36 +1,59 @@
 import React, { useState, useEffect } from "react";
 import JoblyApi from "./api";
-import JobCard from "./JobCard"; // Import the JobCard component
+import JobCard from "./JobCard";
 
 function JobList() {
-  const [jobs, setJobs] = useState(null);
-  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredJobs, setFilteredJobs] = useState([]);
 
   useEffect(() => {
-    async function getJobs() {
+    async function fetchFilteredJobs() {
       try {
-        let jobs = await JoblyApi.getJobs();
-        setJobs(jobs);
+        const jobs = await getFilteredJobs(searchTerm);
+        setFilteredJobs(jobs);
       } catch (error) {
-        setError(error.message || "An error occurred");
+        console.error("Error fetching filtered jobs:", error);
       }
     }
-    getJobs();
-  }, []);
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+    fetchFilteredJobs();
+  }, [searchTerm]);
 
-  if (!jobs) {
-    return <p>Loading...</p>;
-  }
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitting search form...");
+    try {
+      const jobs = await getFilteredJobs(searchTerm);
+      console.log("Filtered jobs:", jobs);
+      setFilteredJobs(jobs);
+    } catch (error) {
+      console.error("Error fetching filtered jobs:", error);
+    }
+  };
+
+  const getFilteredJobs = async (searchTerm) => {
+    const jobs = await JoblyApi.getJobs(searchTerm);
+    return jobs;
+  };
 
   return (
     <div>
       <h1>Jobs</h1>
+      <form onSubmit={handleSearchSubmit}>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          placeholder="Search companies"
+        />
+        <button type="submit">Search</button>
+      </form>
       <ul>
-        {jobs.map(job => (
+        {filteredJobs.map(job => (
           <JobCard key={job.id} job={job} />
         ))}
       </ul>
