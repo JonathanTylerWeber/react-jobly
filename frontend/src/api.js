@@ -48,6 +48,11 @@ class JoblyApi {
     return res.companies;
   }
 
+  static async getJobs() {
+    let res = await this.request(`jobs`);
+    return res.jobs;
+  }
+
   // obviously, you'll add a lot here ...
 }
 
