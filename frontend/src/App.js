@@ -4,16 +4,18 @@ import './App.css';
 import Home from "./Home";
 import Navbar from './Navbar.js'
 import CompanyList from './CompanyList.js'
-import Company from './CompanyDetails.js'
+import CompanyDetails from './CompanyDetails.js'
 import JobList from "./JobList.js";
 import JoblyApi from "./api";
 import { jwtDecode } from "jwt-decode";
 import LoginForm from "./Login";
 import SignupForm from "./Signup";
+import useLocalStorage from "./useLocalStorage";
+import PrivateRoute from './PrivateRoute';
 
 function App() {
   const [currentUser, setCurrentUser] = useState();
-  const [token, setToken] = useState();
+  const [token, setToken] = useLocalStorage('token', null);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -67,26 +69,43 @@ function App() {
         <main>
           <Routes>
             <Route
-              exact path="/"
-              element={<Home />} />
-            <Route
-              exact path="/companies"
-              element={<CompanyList />}
+              exact
+              path="/"
+              element={<Home currentUser={currentUser} />}
             />
             <Route
-              exact path="/companies/:handle"
-              element={<Company />}
+              path="/companies"
+              element={
+                <PrivateRoute currentUser={currentUser}>
+                  <CompanyList />
+                </PrivateRoute>
+              }
             />
             <Route
-              exact path="/jobs"
-              element={<JobList />}
+              path="/companies/:handle"
+              element={
+                <PrivateRoute currentUser={currentUser}>
+                  <CompanyDetails />
+                </PrivateRoute>
+              }
             />
             <Route
-              exact path="/login"
+              path="/jobs"
+              element={
+                <PrivateRoute currentUser={currentUser}>
+                  <JobList />
+                </PrivateRoute>
+              }
+            />
+            < Route
+              exact
+              path="/login"
               element={<LoginForm handleLogin={handleLogin} />} />
             <Route
-              exact path="/signup"
-              element={<SignupForm handleSignup={handleSignup} />} />
+              exact
+              path="/signup"
+              element={<SignupForm handleSignup={handleSignup} />}
+            />
             {/* <Route
               exact path="/profile"
               element={<Profile currentUser={currentUser} />} /> */}
