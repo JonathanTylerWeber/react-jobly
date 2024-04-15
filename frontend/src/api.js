@@ -50,6 +50,14 @@ class JoblyApi {
     }
   }
 
+  static async applyForJob(username, jobId) {
+    try {
+      let res = await this.request(`users/${username}/jobs/${jobId}`, {}, "post");
+      return res.applied; // Return the ID of the applied job
+    } catch (error) {
+      throw error;
+    }
+  }
 
   static async signup(userData) {
     try {

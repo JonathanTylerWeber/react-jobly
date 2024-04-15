@@ -86,7 +86,8 @@ function App() {
               path="/companies/:handle"
               element={
                 <PrivateRoute currentUser={currentUser}>
-                  <CompanyDetails />
+                  <CompanyDetails currentUser={currentUser}
+                    setCurrentUser={setCurrentUser} />
                 </PrivateRoute>
               }
             />
@@ -94,7 +95,8 @@ function App() {
               path="/jobs"
               element={
                 <PrivateRoute currentUser={currentUser}>
-                  <JobList />
+                  <JobList currentUser={currentUser}
+                    setCurrentUser={setCurrentUser} />
                 </PrivateRoute>
               }
             />

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import JoblyApi from "./api";
 import JobCard from "./JobCard";
 
-function CompanyDetails() {
+function CompanyDetails({ currentUser, setCurrentUser }) {
   const [company, setCompany] = useState(null);
   const [error, setError] = useState(null);
   const { handle } = useParams();
@@ -34,7 +34,7 @@ function CompanyDetails() {
       <p>Description: {company.description}</p>
       <ul>
         {company.jobs.map(job => (
-          <JobCard key={job.id} job={job} />
+          <JobCard key={job.id} job={job} currentUser={currentUser} setCurrentUser={setCurrentUser} />
         ))};
       </ul>
     </div>

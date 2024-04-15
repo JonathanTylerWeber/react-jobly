@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import JoblyApi from "./api";
 import JobCard from "./JobCard";
 
-function JobList() {
+function JobList({ currentUser, setCurrentUser }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredJobs, setFilteredJobs] = useState([]);
 
@@ -54,7 +54,8 @@ function JobList() {
       </form>
       <ul>
         {filteredJobs.map(job => (
-          <JobCard key={job.id} job={job} />
+          <JobCard key={job.id} job={job} currentUser={currentUser}
+            setCurrentUser={setCurrentUser} />
         ))}
       </ul>
     </div>
