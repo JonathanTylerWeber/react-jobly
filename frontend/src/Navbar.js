@@ -20,9 +20,12 @@ function NavBar({ currentUser, handleLogout }) {
               <NavItem>
                 <NavLink exact='true' to="/jobs">Jobs</NavLink>
               </NavItem>
-              {/* <NavItem>
-                <NavLink exact to="/profile">Profile</NavLink>
-              </NavItem> */}
+              <NavItem>
+                <NavLink exact='true'
+                  to={`/profile/${currentUser.username}`}>
+                  Profile
+                </NavLink>
+              </NavItem>
               <NavItem>
                 <NavLink exact='true' to="/" onClick={handleLogout}>Logout</NavLink>
               </NavItem>

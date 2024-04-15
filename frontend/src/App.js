@@ -12,6 +12,7 @@ import LoginForm from "./Login";
 import SignupForm from "./Signup";
 import useLocalStorage from "./useLocalStorage";
 import PrivateRoute from './PrivateRoute';
+import Profile from './Profile'
 
 function App() {
   const [currentUser, setCurrentUser] = useState();
@@ -97,6 +98,14 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/profile/:username"
+              element={
+                <PrivateRoute currentUser={currentUser}>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
             < Route
               exact
               path="/login"
@@ -106,9 +115,6 @@ function App() {
               path="/signup"
               element={<SignupForm handleSignup={handleSignup} />}
             />
-            {/* <Route
-              exact path="/profile"
-              element={<Profile currentUser={currentUser} />} /> */}
           </Routes>
         </main>
       </BrowserRouter>
